@@ -4,6 +4,7 @@ import * as dotenv from "dotenv";
 
 import ConnectDB from "./models/database/MySQL"
 import FetchController from "./controllers/FetchController";
+import InsertController from "./controllers/InsertController";
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -30,8 +31,10 @@ class App {
         this.app.set("views", "src/views");
     }
     private setupRoutes(): void {
-        const homeController = new FetchController();
-        this.app.get("/", homeController.index);
+        const fetch = new FetchController();
+        const insert = new InsertController();
+        this.app.get("/:table?", fetch.index);
+        this.app.post("/:table", insert.index)
     }
 
     public start(): void {

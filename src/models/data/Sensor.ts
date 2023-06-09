@@ -1,4 +1,4 @@
-class Material {
+class Sensor {
     public id: number;
     public name: string;
     public created_at: number;
@@ -12,4 +12,4 @@ class Material {
     }
 }
 
-export default Material;
+export default Sensor;

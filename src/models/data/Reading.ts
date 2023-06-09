@@ -1,4 +1,4 @@
-class Material {
+class Reading {
     public body: object;
 
     constructor(body: object) {
@@ -6,4 +6,4 @@ class Material {
     }
 }
 
-export default Material;
+export default Reading;

@@ -29,8 +29,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const bodyParser = __importStar(require("body-parser"));
 const dotenv = __importStar(require("dotenv"));
-const HomeController_1 = __importDefault(require("./controllers/HomeController"));
-const process = __importStar(require("process"));
+const FetchController_1 = __importDefault(require("./controllers/FetchController"));
 dotenv.config(); // Load environment variables from .env file
 class App {
     constructor() {
@@ -49,11 +48,11 @@ class App {
         this.app.set("views", "src/views");
     }
     setupRoutes() {
-        const homeController = new HomeController_1.default();
-        this.app.get("/", homeController.index);
+        const homeController = new FetchController_1.default();
+        this.app.get("/:table?", homeController.index);
     }
     start() {
-        this.app.listen(this.port, () => {
+        this.app.listen(this.port, async () => {
             console.log(`Server is running on http://localhost:${this.port}`);
             console.log(`Running in ${this.mode} mode.`);
         });
