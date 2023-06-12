@@ -5,7 +5,7 @@ dotenv.config();
 
 class ConnectDB {
     private pool: mysql.Pool;
-    private connection?: PoolConnection;
+    private connection: PoolConnection | undefined;
 
     constructor() {
         this.pool = mysql.createPool({
@@ -40,7 +40,7 @@ class ConnectDB {
             console.error(error);
         } finally {
             if (this.connection) {
-                this.connection.release();
+                await this.connection.release();
             }
         }
     }
@@ -48,8 +48,7 @@ class ConnectDB {
     public async insert(body: object, table: string): Promise<void> {
         try {
             if (this.connection) {
-                // console.log(Object.keys(body)[0]);
-                const [rows, fields] = await this.connection.query(`SELECT *
+                let [rows, fields] = await this.connection.query(`SELECT *
                                                                     FROM ${table}`);
                 const values: string[] = [];
                 const keys: string[] = [];
@@ -69,13 +68,16 @@ class ConnectDB {
                 }
 
                 let concatenatedValues = values.join(', ');
-                let concatenatedKeys= keys.join(', ');
+                let concatenatedKeys = keys.join(', ');
                 concatenatedValues = `(${concatenatedValues})`
                 concatenatedKeys = `(${concatenatedKeys})`
                 const query = `INSERT INTO ${table} ${concatenatedKeys} VALUES ${concatenatedValues}`
                 console.log('Concatenated Values:', concatenatedValues);
                 console.log('Concatenated Keys:', concatenatedKeys);
                 console.log(query);
+
+                [rows, fields] = await this.connection.query(query);
+                return rows as any;
             }
         } catch (error) {
             console.error(error);

@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
-import * as bodyParser from "body-parser";
-import * as dotenv from "dotenv";
+import bodyParser from 'body-parser';
+import dotenv from "dotenv";
 
 import ConnectDB from "./models/database/MySQL"
 import FetchController from "./controllers/FetchController";
@@ -23,7 +23,7 @@ class App {
     }
 
     private setupMiddlewares(): void {
-        this.app.use(bodyParser.urlencoded({ extended: true }));
+        this.app.use(bodyParser.json());
     }
 
     private setupViews(): void {

@@ -5,53 +5,45 @@ import Sensor from "../models/data/Sensor";
 import Material from "../models/data/Material";
 
 class InsertController {
+    private result: Material | Sensor | Reading | undefined;
+    private msg: void | undefined;
+
+    constructor() {
+        this.index = this.index.bind(this)
+    }
+
     public async index(req: Request, res: Response): Promise<void> {
         const {table} = req.params;
+        const {body} = req.body;
+        const actions = ["material", "reading", "sensor"];
+
+        if (!actions.includes(table)) {
+            res.json({"msg": "action doesnt exist"})
+            return;
+        }
+
+        console.log(body);
+
+        if (table === "material") {
+            this.result = new Material(body);
+        }
+        if (table === "sensor") {
+            this.result = new Sensor(body);
+        }
+        if (table === "reading") {
+            this.result = new Reading(body);
+        }
 
         const db = new ConnectDB();
         await db.connect();
 
-        const material = new Material(
-            0,
-            "Almoniak",
-            +new Date,
-            +new Date
-        );
-
-        const sensor = new Sensor(
-            0,
-            "Sensor1",
-            +new Date,
-            +new Date,
-        );
-
-        const data = {
-            "id": 0,
-            "materialId": 0,
-            "size": 10,
-            "readingDate": 1686303461922,
-            "exposure": 10,
-            "concentration": 100,
-            "rBefore": 255,
-            "gBefore": 255,
-            "bBefore": 255,
-            "rAfter": 250,
-            "gAfter": 250,
-            "bAfter": 250,
-            "dE": 10,
-            "sensorId": 0,
-            "created_at": +new Date,
-            "updated_at": +new Date
+        if (this.result !== undefined) {
+            this.msg = await db.insert(this.result.body, table);
+        } else {
+            console.log("Insert underfined")
         }
-        const reading = new Reading(data);
 
-        const body = material;
-        // const body = sensor;
-        // const body = reading["body"];
-
-        await db.insert(body, table);
-
-        res.json(body)
+        res.json(this.msg)
     }
 }
 
