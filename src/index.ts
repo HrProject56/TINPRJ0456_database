@@ -33,7 +33,7 @@ class App {
     private setupRoutes(): void {
         const fetch = new FetchController();
         const insert = new InsertController();
-        this.app.get("/:table?", fetch.index);
+        this.app.get("/:table?/:id?", fetch.index);
         this.app.post("/:table", insert.index)
     }
 

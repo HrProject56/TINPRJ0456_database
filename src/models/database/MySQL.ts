@@ -28,12 +28,14 @@ class ConnectDB {
         }
     }
 
-    public async fetch(table: string): Promise<void> {
+    public async fetch(table: string, id: string): Promise<void> {
         // Perform database operations using the connection
         try {
             if (this.connection) {
-                const [rows, fields] = await this.connection.query(`SELECT *
-                                                                    FROM ${table}`);
+                let query;
+                query = `SELECT * FROM ${table}`;
+                if (id != undefined) query = query + ` WHERE id = ${id}`
+                const [rows, fields] = await this.connection.query(query);
                 return rows as any;
             }
         } catch (error) {

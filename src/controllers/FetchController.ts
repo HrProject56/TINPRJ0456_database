@@ -9,13 +9,13 @@ class FetchController {
         const db = new ConnectDB();
         await db.connect();
 
-        const {table} = req.params;
-        fetchedData = await db.fetch(table);
+        const {table, id} = req.params;
+        fetchedData = await db.fetch(table, id);
 
         if (fetchedData === undefined) {
             msg = { msg: "unknown error" };
         } else if (Object.keys(fetchedData).length === 0) {
-            msg = { msg: "table is empty" };
+            msg = { msg: "table or id is empty" };
         } else {
             msg = fetchedData;
         }
