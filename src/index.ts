@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import ConnectDB from "./models/database/MySQL"
 import FetchController from "./controllers/FetchController";
 import InsertController from "./controllers/InsertController";
+import UpdateController from "./controllers/UpdateController";
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -33,8 +34,10 @@ class App {
     private setupRoutes(): void {
         const fetch = new FetchController();
         const insert = new InsertController();
+        const update = new UpdateController();
         this.app.get("/:table?/:id?", fetch.index);
-        this.app.post("/:table", insert.index)
+        this.app.post("/:table", insert.index);
+        this.app.put("/:table", update.index);
     }
 
     public start(): void {

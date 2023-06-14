@@ -4,7 +4,7 @@ import Reading from "../models/data/Reading";
 import Sensor from "../models/data/Sensor";
 import Material from "../models/data/Material";
 
-class InsertController {
+class UpdateController {
     private result: Material | Sensor | Reading | undefined;
     private msg: void | undefined;
 
@@ -22,8 +22,6 @@ class InsertController {
             return;
         }
 
-        console.log(body);
-
         if (table === "material") {
             this.result = new Material(body);
         }
@@ -34,17 +32,19 @@ class InsertController {
             this.result = new Reading(body);
         }
 
+        console.log(this.result);
+
         const db = new ConnectDB();
         await db.connect();
 
         if (this.result !== undefined) {
-            this.msg = await db.insert(this.result.body, table);
+            this.msg = await db.update(this.result.body, table);
         } else {
-            console.log("Insert undefined")
+            console.log("Update undefined")
         }
 
         res.json(this.msg)
     }
 }
 
-export default InsertController;
+export default UpdateController;

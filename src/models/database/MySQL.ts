@@ -33,7 +33,8 @@ class ConnectDB {
         try {
             if (this.connection) {
                 let query;
-                query = `SELECT * FROM ${table}`;
+                query = `SELECT *
+                         FROM ${table}`;
                 if (id != undefined) query = query + ` WHERE id = ${id}`
                 const [rows, fields] = await this.connection.query(query);
                 return rows as any;
@@ -50,8 +51,10 @@ class ConnectDB {
     public async insert(body: object, table: string): Promise<void> {
         try {
             if (this.connection) {
-                let [rows, fields] = await this.connection.query(`SELECT *
-                                                                    FROM ${table}`);
+                let query = `SELECT *
+                             FROM ${table}`
+                let [rows, fields] = await this.connection.query(query);
+
                 const values: string[] = [];
                 const keys: string[] = [];
 
@@ -63,7 +66,6 @@ class ConnectDB {
                         if (key == field) {
                             const value = typeof body[key] === 'string' ? `"${body[key]}"` : body[key];
                             values.push(value);
-
                             keys.push(key);
                         }
                     }
@@ -73,11 +75,76 @@ class ConnectDB {
                 let concatenatedKeys = keys.join(', ');
                 concatenatedValues = `(${concatenatedValues})`
                 concatenatedKeys = `(${concatenatedKeys})`
-                const query = `INSERT INTO ${table} ${concatenatedKeys} VALUES ${concatenatedValues}`
+
+                query = `INSERT INTO ${table} ${concatenatedKeys} VALUES ${concatenatedValues}`
                 console.log('Concatenated Values:', concatenatedValues);
                 console.log('Concatenated Keys:', concatenatedKeys);
                 console.log(query);
 
+                [rows, fields] = await this.connection.query(query);
+                return rows as any;
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            if (this.connection) {
+                this.connection.release();
+            }
+        }
+    }
+
+    async update(body: object, table: string) {
+        try {
+            if (this.connection) {
+                let query = `SELECT *
+                             FROM ${table}`
+                let [rows, fields] = await this.connection.query(query);
+
+                let id: string | undefined;
+                let field: string | undefined;
+                let key: string | undefined;
+                let value: string | undefined;
+
+                const fieldNames: string[] = [];
+                const keys: string[] = [];
+                const values: string[] = [];
+
+                for (let i = 0; i < fields.length; i++) {
+                    field = fields[i].name;
+                    key = Object.keys(body)[i] as keyof typeof body;
+                    value = body[key];
+
+                    if (field != undefined) {
+                        fieldNames.push(fields[i].name)
+                    }
+
+                    if (key != "id") {
+                        if (key != undefined) {
+                            keys.push(key);
+                        }
+
+                        if (value != undefined) {
+                            if (typeof value === 'string'){
+                                value = `"${value}"`
+                            }
+                            values.push(value);
+                        }
+                    }
+
+                    if (key == "id"){
+                        id = value;
+                    }
+                }
+
+                const verified: string[] = [];
+                for (let i = 0; i < keys.length; i++) {
+                    if (fieldNames.includes(keys[i])) {
+                        verified.push(`${keys[i]} = ${values[i]}`);
+                    }
+                }
+
+                let concatVerified = verified.join(', ');
+                query = `UPDATE ${table} SET ${concatVerified} WHERE id = ${id}`;
                 [rows, fields] = await this.connection.query(query);
                 return rows as any;
             }
