@@ -31,7 +31,7 @@ class ConnectDB {
     public async fetch(table: string, id: string): Promise<void> {
         // Perform database operations using the connection
         try {
-            if (this.connection) {
+            if (this.connection && table != undefined) {
                 let query;
                 query = `SELECT *
                          FROM ${table}`;

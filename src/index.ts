@@ -37,10 +37,10 @@ class App {
         const fetch = new FetchController();
         const insert = new InsertController();
         const update = new UpdateController();
-        this.app.get("/generate", generate.index);
-        this.app.get("/:table?/:id?", fetch.index);
-        this.app.post("/:table", insert.index);
-        this.app.put("/:table", update.index);
+        this.app.get("/api/v1/generate", generate.index);
+        this.app.get("/api/v1/:table?/:id?", fetch.index);
+        this.app.post("/api/v1/:table", insert.index);
+        this.app.put("/api/v1/:table", update.index);
     }
 
     public start(): void {
