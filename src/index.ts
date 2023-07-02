@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 
 import ConnectDB from "./models/database/MySQL"
 import GenerateController from "./controllers/GenerateController";
+import DownloadController from "./controllers/DownloadController";
 import FetchController from "./controllers/FetchController";
 import InsertController from "./controllers/InsertController";
 import UpdateController from "./controllers/UpdateController";
@@ -34,10 +35,12 @@ class App {
     }
     private setupRoutes(): void {
         const generate = new GenerateController();
+        const download = new DownloadController();
         const fetch = new FetchController();
         const insert = new InsertController();
         const update = new UpdateController();
         this.app.get("/api/v1/generate", generate.index);
+        this.app.get("/api/v1/download", download.index);
         this.app.get("/api/v1/:table?/:id?", fetch.index);
         this.app.post("/api/v1/:table", insert.index);
         this.app.put("/api/v1/:table", update.index);

@@ -1,141 +1,62 @@
 import {Request, Response} from "express";
+import * as http from "http";
+import dotenv from "dotenv";
 import * as fs from 'fs';
+
+dotenv.config(); // Load environment variables from .env file
 
 class GenerateController {
     public async index(req: Request, res: Response): Promise<void> {
-        // Example JSON data
-        const jsonData = [
-            {
-                "id": 7,
-                "materialId": 1,
-                "size": 10,
-                "readingDate": "2023-06-11T22:00:00.000Z",
-                "exposure": 10,
-                "concentration": 100,
-                "rBefore": 255,
-                "gBefore": 255,
-                "bBefore": 255,
-                "rAfter": 1,
-                "gAfter": 2,
-                "bAfter": 3,
-                "dE": 10,
-                "sensorId": 1,
-                "created_at": "2023-06-12T21:59:59.000Z",
-                "updated_at": "2023-06-12T11:59:59.000Z"
-            },
-            {
-                "id": 8,
-                "materialId": 1,
-                "size": 10,
-                "readingDate": "2023-06-11T22:00:00.000Z",
-                "exposure": 10,
-                "concentration": 100,
-                "rBefore": 255,
-                "gBefore": 255,
-                "bBefore": 255,
-                "rAfter": 250,
-                "gAfter": 250,
-                "bAfter": 250,
-                "dE": 10,
-                "sensorId": 1,
-                "created_at": "2023-06-12T21:59:59.000Z",
-                "updated_at": "2023-06-12T21:59:59.000Z"
-            },
-            {
-                "id": 9,
-                "materialId": 1,
-                "size": 10,
-                "readingDate": "2023-06-11T22:00:00.000Z",
-                "exposure": 10,
-                "concentration": 100,
-                "rBefore": 255,
-                "gBefore": 255,
-                "bBefore": 255,
-                "rAfter": 250,
-                "gAfter": 250,
-                "bAfter": 250,
-                "dE": 10,
-                "sensorId": 1,
-                "created_at": "2023-06-12T21:59:59.000Z",
-                "updated_at": "2023-06-12T21:59:59.000Z"
-            },
-            {
-                "id": 10,
-                "materialId": 1,
-                "size": 10,
-                "readingDate": "2023-06-11T22:00:00.000Z",
-                "exposure": 10,
-                "concentration": 100,
-                "rBefore": 255,
-                "gBefore": 255,
-                "bBefore": 255,
-                "rAfter": 250,
-                "gAfter": 250,
-                "bAfter": 250,
-                "dE": 10,
-                "sensorId": 1,
-                "created_at": "2023-06-12T21:59:59.000Z",
-                "updated_at": "2023-06-12T21:59:59.000Z"
-            },
-            {
-                "id": 11,
-                "materialId": 1,
-                "size": 10,
-                "readingDate": "2023-06-11T22:00:00.000Z",
-                "exposure": 10,
-                "concentration": 100,
-                "rBefore": 255,
-                "gBefore": 255,
-                "bBefore": 255,
-                "rAfter": 250,
-                "gAfter": 250,
-                "bAfter": 250,
-                "dE": 10,
-                "sensorId": 1,
-                "created_at": "2023-06-12T21:59:59.000Z",
-                "updated_at": "2023-06-12T21:59:59.000Z"
-            },
-            {
-                "id": 12,
-                "materialId": 1,
-                "size": 10,
-                "readingDate": "2023-06-11T22:00:00.000Z",
-                "exposure": 10,
-                "concentration": 100,
-                "rBefore": 255,
-                "gBefore": 255,
-                "bBefore": 255,
-                "rAfter": 250,
-                "gAfter": 250,
-                "bAfter": 250,
-                "dE": 10,
-                "sensorId": 1,
-                "created_at": "2023-06-12T21:59:59.000Z",
-                "updated_at": "2023-06-12T21:59:59.000Z"
+        const options = {
+            hostname: '127.0.0.1', // Replace with the actual API hostname
+            port: `${process.env.EXPRESS_PORT}`,
+            path: '/api/v1/reading', // Replace with the actual API endpoint
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
             }
-        ];
+        };
 
-        // Generate CSV file
-        let csvContent = '';
-        for (let i = 0; i < jsonData.length; i++) {
-            const obj = jsonData[i];
-            csvContent += Object.entries(obj)
-                .map(([key, value]) => `${key};${value}`)
-                .join('\n');
+        const request = http.request(options, (response) => {
+            let requestData = '';
+            response.on('data', (chunk) => {
+                requestData += chunk;
+            });
 
-            if (i < jsonData.length - 1) {
-                csvContent += '\n\n'; // Add a newline after each object
-            }
-        }
+            response.on('end', () => {
+                // Generate CSV file
+                let csvContent = "";
+                requestData = JSON.parse(requestData)
+                for (let i = 0; i < requestData.length; i++) {
+                    const obj = requestData[i];
+                    csvContent += Object.entries(obj)
+                        .map(([key, value]) => `${key};${value}`)
+                        .join('\n');
 
-        const csvFileName = 'data.csv';
-        fs.writeFile(csvFileName, csvContent, (err: NodeJS.ErrnoException | null) => {
-            if (err) {
-                console.error('Error writing CSV file:', err);
-                return;
-            }
-            console.log(`CSV file "${csvFileName}" generated.`);
+                    if (i < requestData.length - 1) {
+                        csvContent += '\n\n'; // Add a newline after each object
+                    }
+                }
+
+                const csvFileName = 'data.csv';
+                fs.writeFile(csvFileName, csvContent, (err: NodeJS.ErrnoException | null) => {
+                    if (err) {
+                        console.error('Error writing CSV file:', err);
+                        return;
+                    }
+                    console.log(`CSV file "${csvFileName}" generated.`);
+                });
+
+                res.json(csvContent);
+            });
         });
+
+        request.on('error', (error) => {
+            console.error(error);
+            res.status(500).send('An error occurred'); // Send an error response to the client
+        });
+
+        request.end();
     }
 }
 
