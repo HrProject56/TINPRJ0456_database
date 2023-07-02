@@ -30,7 +30,7 @@ const express_1 = __importDefault(require("express"));
 const bodyParser = __importStar(require("body-parser"));
 const dotenv = __importStar(require("dotenv"));
 const FetchController_1 = __importDefault(require("./controllers/FetchController"));
-dotenv.config(); // Load environment variables from .env file
+dotenv.config(); // Load environment variables from .env.development.local file
 class App {
     constructor() {
         this.app = (0, express_1.default)();

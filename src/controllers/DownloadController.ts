@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import * as fs from 'fs';
 import * as path from "path";
 
-dotenv.config(); // Load environment variables from .env file
+dotenv.config(); // Load environment variables from .env.development.local file
 
 class GenerateController {
     public async index(req: Request, res: Response): Promise<void> {

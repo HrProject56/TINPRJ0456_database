@@ -9,7 +9,7 @@ import FetchController from "./controllers/FetchController";
 import InsertController from "./controllers/InsertController";
 import UpdateController from "./controllers/UpdateController";
 
-dotenv.config(); // Load environment variables from .env file
+dotenv.config(); // Load environment variables from .env.development.local file
 
 class App {
     private app: express.Application;

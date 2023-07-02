@@ -1,0 +1,14 @@
+version: '3.3'
+services:
+  hrproject56:
+    container_name: csce_webserver_ghcr
+    ports:
+      - '8080:8080'
+    environment:
+      - NODE_ENV=production
+      - EXPRESS_PORT=8080
+      - SQL_HOST=192.168.178.241
+      - SQL_USER=dev
+      - SQL_PASS=test
+      - SQL_DB=CSCE
+    image: 'ghcr.io/hrproject56/tinprj0456_database:main'

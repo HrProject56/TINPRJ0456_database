@@ -3,7 +3,7 @@ import * as http from "http";
 import dotenv from "dotenv";
 import * as fs from 'fs';
 
-dotenv.config(); // Load environment variables from .env file
+dotenv.config(); // Load environment variables from .env.development.local file
 
 class GenerateController {
     public async index(req: Request, res: Response): Promise<void> {
